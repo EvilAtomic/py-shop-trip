@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class Shop:
 
     def __init__(self, name: str, location: tuple, products: dict) -> None:
@@ -14,7 +15,7 @@ class Shop:
             if product is None:
                 return None
             total += price * play
-        return  total
+        return total
 
     def chek_price(self, shopping_cart: dict) -> float:
         correct_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")

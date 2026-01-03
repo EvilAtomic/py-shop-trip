@@ -1,43 +1,40 @@
+import os
 import json
-from app.car import Car
-from app.shop import Shop
 from app.customer import Customer
+from app.shop import Shop
+from app.car import Car
 
 
 def shop_trip() -> None:
-    with open("config.json", "r") as file:
-        trades = json.load(file)
-
-    fuel_price = trades["FUEL_PRICE"]
-    customs = trades["customers"]
-    shops = trades["shops"]
-
-    shop_objects = []
-    for shop_data in shops:
-        shop = Shop(
-            name=shop_data["name"],
-            location=tuple(shop_data["location"]),
-            products=shop_data["products"]
+    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(config_path, "r") as file:
+        config = json.load(file)
+    fuel_price = config["FUEL_PRICE"]
+    shops = [Shop(**shop_data) for shop_data in config["shops"]]
+    customers = [
+        Customer(
+            customer_data["name"],
+            tuple[float, float](customer_data["location"]),
+            customer_data["money"],
+            customer_data["product_cart"],
+            Car(customer_data["car"]["brand"],
+                customer_data["car"]["fuel_consumption"]),
         )
-        shop_objects.append(shop)
-
-    customer_objects = []
-    for cust_data in customs:
-        car = Car(
-            brand=cust_data["car"]["brand"],
-            fuel_consumption=cust_data["car"]["fuel_consumption"]
-        )
-
-        customer = Customer(
-            name=cust_data["name"],
-            money=cust_data["money"],
-            location=tuple(cust_data["location"]),
-            shopping_cart=cust_data["product_cart"],
-            car=car
-        )
-        customer_objects.append(customer)
-
-    print(f"Fuel price: {fuel_price}")
+        for customer_data in config["customers"]
+    ]
+    for customer in customers:
+        print(f"{customer.name} has {customer.money} dollars")
+        for shop in shops:
+            trip_cost = customer.calculate_trip_cost(shop, fuel_price)
+            if trip_cost is not None:
+                print(f"{customer.name}'s trip to the "
+                      f"{shop.name} costs {trip_cost:.2f}")
+        best_shop = customer.choose_best_shop(shops, fuel_price)
+        if best_shop:
+            customer.go_shopping(best_shop, fuel_price)
+        else:
+            print(f"{customer.name} doesn't have enough "
+                  f"money to make a purchase in any shop")
 
 
 if __name__ == "__main__":

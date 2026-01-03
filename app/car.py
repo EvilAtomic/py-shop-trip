@@ -1,10 +1,8 @@
 class Car:
+    def __init__(self, brand: str, fuel_consumption: float) -> None:
+        self.brand = brand
+        self.fuel_consumption = fuel_consumption
 
-    def __init__(self, marks: str, fuel_price: float) -> None:
-        self.marks = marks
-        self.fuel_price = fuel_price
-
-    def fuel_cost(self, distance: float, fuel_consumption: float) -> float:
-        liters = distance * fuel_consumption / 100
-        cost = liters * self.fuel_price
-        return cost
+    def calculate_fuel_cost(self, distance: float,
+                            fuel_price: float) -> float:
+        return (self.fuel_consumption / 100) * distance * fuel_price

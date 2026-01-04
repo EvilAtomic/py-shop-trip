@@ -4,7 +4,7 @@ from app.shop import Shop
 
 
 class Customer:
-    def __init__(self, name: str, location: tuple[float, float], money: float,
+    def __init__(self, name: str, location: tuple, money: float,
                  product_cart: dict, car: Car) -> None:
         self.name = name
         self.location = location
